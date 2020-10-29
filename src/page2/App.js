@@ -1,8 +1,9 @@
+import React,{ Component,Fragment } from 'react';
 
 function App() {
   return (
     <div >
-      new react
+      new react2
     </div>
   );
 }
