@@ -144,5 +144,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "glob": "^7.1.6"
   }
 }

@@ -573,6 +573,7 @@ module.exports = function (webpackEnv) {
                         chunks: [name],
                         template: paths.appHtml,
                         filename: name + '.html',
+                        publicPath: './',
                     },
                     isEnvProduction
                         ? {
