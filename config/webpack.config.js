@@ -175,7 +175,7 @@ module.exports = function (webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry:entry,
+    entry,
       // isEnvDevelopment && !shouldUseReactRefresh
       //   ? [
       //       // Include an alternative client for WebpackDevServer. A client's job is to
@@ -211,6 +211,9 @@ module.exports = function (webpackEnv) {
       // filename: isEnvProduction
       //   ? 'static/js/[name].[contenthash:8].js'
       //   : isEnvDevelopment && 'static/js/bundle.js',
+      //   filename: isEnvProduction
+      //       ? 'static/js/[name]/[name].[contenthash:8].js'
+      //       : isEnvDevelopment && 'static/js/[name]/bundle.js',
         filename: isEnvProduction
             ? 'static/js/[name]/[name].[contenthash:8].js'
             : isEnvDevelopment && 'static/js/[name]/[name].bundle.js',
@@ -226,7 +229,7 @@ module.exports = function (webpackEnv) {
             : isEnvDevelopment && 'static/js/[name]/[name].chunk.js',
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
-      // We inferred the "public path" (such as / or /my-project) from homepage.
+      // We inferred the "public path" (such as / or /my-project) from index.
       publicPath: paths.publicUrlOrPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
@@ -572,8 +575,9 @@ module.exports = function (webpackEnv) {
                         inject: true,
                         chunks: [name],
                         template: paths.appHtml,
-                        filename: name + '.html',
-                        publicPath: './',
+                        // filename: name + '.html',
+                        filename: isEnvProduction ? name + '.html' : name,
+                        publicPath: isEnvProduction ? './' : '',
                     },
                     isEnvProduction
                         ? {
@@ -629,7 +633,7 @@ module.exports = function (webpackEnv) {
       // Makes some environment variables available in index.html.
       // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
       // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
-      // It will be an empty string unless you specify "homepage"
+      // It will be an empty string unless you specify "index"
       // in `package.json`, in which case it will be the pathname of that URL.
       new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
       // This gives some necessary context to module not found errors, such as
@@ -699,6 +703,10 @@ module.exports = function (webpackEnv) {
       //     };
       //   },
       // }),
+        new ManifestPlugin({
+            fileName: 'manifest.json',
+            publicPath: paths.publicUrlOrPath,
+        }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
